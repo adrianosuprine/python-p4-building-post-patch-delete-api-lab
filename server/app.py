@@ -59,7 +59,8 @@ def baked_goods():
     elif request.method == 'POST':
         new_baked_good = BakedGood(
             name=request.form.get("name"),
-            price=request.form.get("price")
+            price=request.form.get("price"),
+            bakery_id=request.form.get("bakery_id")
         )
         
         db.session.add(new_baked_good)
@@ -76,7 +77,7 @@ def baked_goods():
 @app.route('/baked_goods/<int:id>', methods=['DELETE'])
 def delete_baked_good(id):
     baked_good = BakedGood.query.filter_by(id=id).first()
-    if request.method == 'DELETE':
+    if baked_good:
         db.session.delete(baked_good)
         db.session.commit()
         response_body = {
@@ -89,6 +90,18 @@ def delete_baked_good(id):
         )
         
         return response
+    else:
+        response_body = {
+            "delete_successful":False,
+            "message":"Baked good not found."
+        }
+        response = make_response(
+            response_body,
+            404
+        )
+        
+        return response
+        
     
     
 
